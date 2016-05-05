@@ -6,7 +6,8 @@ import _ from 'lodash';
      {
          cursor: [required] cursor,
          getPromise: [required] Function: which returns promise,
-         alwaysLoad: [optional] Boolean: always load data via promise call
+         alwaysLoad: [optional] Boolean: always load data via promise call,
+         transform: [optional] Function: transforms data, called only on load
      }
  ]
  */
@@ -39,6 +40,10 @@ export default {
             if (item.alwaysLoad || !isLoaded) {
                 const promise = item.getPromise()
                     .then(data => {
+                        if (_.isFunction(item.transform)) {
+                            data = item.transform(data);
+                        }
+
                         cursor.set({
                             isLoaded: true,
                             initiator: INITIATOR,

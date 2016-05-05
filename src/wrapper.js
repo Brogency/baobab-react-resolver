@@ -1,5 +1,5 @@
 import React from 'react';
-import { root as RootMixin } from 'baobab-react/mixins';
+import { RootMixin } from 'baobab-react-mixins';
 
 export default React.createClass({
     mixins: [RootMixin],

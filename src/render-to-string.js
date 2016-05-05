@@ -6,7 +6,10 @@ import Wrapper from './wrapper';
 
 export default function (reactElement, baobabOptions = {}) {
     return new Promise(function (resolve, reject) {
-        const tree = new Baobab({}, _.merge({}, baobabOptions, { immutable: false, asynchronous: false }));
+        const tree = new Baobab(
+            {},
+            _.merge({}, baobabOptions, { immutable: false, asynchronous: false })
+        );
         const queue = [];
         const wrappedElement = (
             <Wrapper onResolve={(promise) => queue.push(promise)} tree={tree}>
