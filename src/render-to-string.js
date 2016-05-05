@@ -8,7 +8,10 @@ export default function (reactElement, baobabOptions = {}) {
     return new Promise(function (resolve, reject) {
         const tree = new Baobab(
             {},
-            _.merge({}, baobabOptions, { immutable: false, asynchronous: false })
+            _.merge({}, baobabOptions, {
+                immutable: false,
+                asynchronous: false,
+            })
         );
         const queue = [];
         const wrappedElement = (
@@ -17,12 +20,20 @@ export default function (reactElement, baobabOptions = {}) {
             </Wrapper>
         );
 
-        // Fill queue with promises
-        ReactDOM.renderToStaticMarkup(wrappedElement);
+        const resolveQueue = () => {
+            // Fill queue with promises
+            ReactDOM.renderToStaticMarkup(wrappedElement);
 
-        tree.unbindAll();
+            tree.unbindAll();
 
-        Promise.all(queue)
+            if (queue.length) {
+                return Promise.all(queue)
+                    .then(() => queue.length = 0)
+                    .then(resolveQueue);
+            }
+        };
+
+        resolveQueue()
             .then(() => resolve({
                 reactString: ReactDOM.renderToString(wrappedElement),
                 initialTree: tree.serialize(),

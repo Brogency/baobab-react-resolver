@@ -1,10 +1,39 @@
 import React from 'react';
 import { SchemaBranchMixin, BranchMixin } from 'baobab-react-mixins';
 import { ResolveMixin } from '../src';
-import { getUser, getProfile } from './services';
+import { getUser, getProfile, getSettings } from './services';
 
 const Profile = React.createClass({
     displayName: 'Profile',
+
+    mixins: [SchemaBranchMixin, ResolveMixin],
+
+    schema: {
+        userPk: null,
+        pk: null,
+        settings: {
+            data: {},
+        },
+    },
+
+    getResolve() {
+        return [
+            {
+                cursor: this.cursors.settings,
+                getPromise: () => getSettings(this.state.pk),
+            },
+        ];
+    },
+
+    render() {
+        return (
+            <div>Loaded data</div>
+        );
+    },
+});
+
+const User = React.createClass({
+    displayName: 'User',
 
     mixins: [SchemaBranchMixin, ResolveMixin],
 
@@ -25,14 +54,18 @@ const Profile = React.createClass({
     },
 
     render() {
+        if (!this.isFullyLoaded()) {
+            return null;
+        }
+
         return (
-            <div>Loaded data</div>
+            <Profile tree={this.cursors.profile.select('data')} />
         );
     },
 });
 
 export default React.createClass({
-    displayName: 'User',
+    displayName: 'RootComponent',
 
     mixins: [BranchMixin, ResolveMixin],
 
@@ -55,7 +88,7 @@ export default React.createClass({
         }
 
         return (
-            <Profile tree={this.cursors.user.select('data')} />
+            <User tree={this.cursors.user.select('data')} />
         );
     },
 });
