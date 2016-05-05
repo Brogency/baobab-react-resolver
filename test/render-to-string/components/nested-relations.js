@@ -1,7 +1,7 @@
 import React from 'react';
 import { SchemaBranchMixin, BranchMixin } from 'baobab-react-mixins';
-import { ResolveMixin } from '../src';
-import { getUser, getProfile, getSettings } from './services';
+import { ResolveMixin } from '../../../src';
+import { getUser, getProfile, getSettings } from '../../services';
 
 const Profile = React.createClass({
     displayName: 'Profile',
@@ -77,7 +77,7 @@ export default React.createClass({
         return [
             {
                 cursor: this.cursors.user,
-                getPromise: () => getUser(),
+                getPromise: getUser,
             },
         ];
     },

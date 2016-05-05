@@ -12,10 +12,6 @@ import _ from 'lodash';
  ]
  */
 
-const __SERVER__ = typeof window === 'undefined';
-
-const INITIATOR = __SERVER__ ? 'server' : 'client';
-
 export default {
     displayName: 'ResolveMixin',
 
@@ -24,20 +20,28 @@ export default {
     },
 
     componentWillMount() {
+        // onResolve exists only on renderToString
+        const inRenderToString = _.isFunction(this.context.onResolve);
+
+        // renderToString is used only on server render side
+        const renderSide = inRenderToString ? 'server' : 'client';
+
         const toResolve = this.getResolve();
 
         _.forEach(toResolve, item => {
             const cursor = item.cursor;
+            const alwaysLoad = inRenderToString ? false : item.alwaysLoad;
+
             const cursorValue = cursor.get();
             const isLoaded = _.get(cursorValue, 'isLoaded');
             const initiator = _.get(cursorValue, 'initiator');
 
-            if (isLoaded && initiator != INITIATOR) {
-                cursor.set('initiator', INITIATOR);
+            if (isLoaded && initiator != renderSide) {
+                cursor.set('initiator', renderSide);
                 return true;
             }
 
-            if (item.alwaysLoad || !isLoaded) {
+            if (alwaysLoad || !isLoaded) {
                 const promise = item.getPromise()
                     .then(data => {
                         if (_.isFunction(item.transform)) {
@@ -46,12 +50,12 @@ export default {
 
                         cursor.set({
                             isLoaded: true,
-                            initiator: INITIATOR,
+                            initiator: renderSide,
                             data,
                         });
                     });
 
-                if (_.isFunction(this.context.onResolve)) {
+                if (inRenderToString) {
                     this.context.onResolve(promise);
                 }
 

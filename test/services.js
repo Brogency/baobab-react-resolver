@@ -1,4 +1,6 @@
-import 'babel-polyfill';
+if (!global._babelPolyfill) {
+    require('babel-polyfill');
+}
 
 export function getUser() {
     return new Promise((resolve, reject) => {

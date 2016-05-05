@@ -1,10 +1,11 @@
 import React from 'react';
-import { renderToString } from '../src';
-import User from './component';
+import { renderToString } from '../../src';
+import NestedRelations from './components/nested-relations';
+import AlwaysFailed from './components/always-failed';
 
 describe('renderToString', () => {
     it('should resolve first-level resolves', (done) => {
-        renderToString(<User />).then(({ initialTree }) => {
+        renderToString(<NestedRelations />).then(({ initialTree }) => {
             initialTree.should.have.deep.property('user.data');
 
             const user = initialTree.user.data;
@@ -16,7 +17,7 @@ describe('renderToString', () => {
     });
 
     it('should resolve nested resolves', (done) => {
-        renderToString(<User />).then(({ initialTree }) => {
+        renderToString(<NestedRelations />).then(({ initialTree }) => {
             initialTree.should.have.deep.property('user.data.profile.data');
 
             const profile = initialTree.user.data.profile.data;
@@ -35,17 +36,7 @@ describe('renderToString', () => {
         });
     });
 
-    it('should fall down in catch if any service is rejected', () => {
-
-    });
-});
-
-describe('resolveMixin', () => {
-    it('should transform data correctly before set into cursor', () => {
-
-    });
-
-    it('should do not load again data if alwaysLoad is false', () => {
-
+    it('should fall down in catch if any service is rejected', (done) => {
+        renderToString(<AlwaysFailed />).catch(() => done());
     });
 });
