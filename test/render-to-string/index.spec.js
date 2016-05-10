@@ -2,6 +2,7 @@ import React from 'react';
 import { renderToString } from '../../src';
 import NestedRelations from './components/nested-relations';
 import AlwaysFailed from './components/always-failed';
+import WithoutResolve from './components/without-resolve';
 
 describe('renderToString', () => {
     it('should resolve first-level resolves', (done) => {
@@ -38,5 +39,9 @@ describe('renderToString', () => {
 
     it('should fall down in catch if any service is rejected', (done) => {
         renderToString(<AlwaysFailed />).catch(() => done());
+    });
+
+    it('should render without errors when resolvers is not used', (done) => {
+        renderToString(<WithoutResolve />).then(() => done());
     });
 });

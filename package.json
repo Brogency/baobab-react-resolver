@@ -1,6 +1,6 @@
 {
   "name": "baobab-react-resolver",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Promise resolver for baobab powered applications.",
   "main": "./dist/index.js",
   "scripts": {

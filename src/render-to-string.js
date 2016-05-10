@@ -31,6 +31,8 @@ export default function (reactElement, baobabOptions = {}) {
                     .then(() => queue.length = 0)
                     .then(resolveQueue);
             }
+
+            return Promise.resolve();
         };
 
         resolveQueue()
