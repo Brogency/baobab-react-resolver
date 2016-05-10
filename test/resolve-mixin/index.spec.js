@@ -23,7 +23,7 @@ function renderAlwaysLoad(alwaysLoad, initialTree) {
 
     return {
         promise,
-        tree
+        tree,
     };
 }
 
