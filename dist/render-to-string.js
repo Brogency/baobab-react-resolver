@@ -32,6 +32,8 @@ exports.default = function (reactElement) {
                     return queue.length = 0;
                 }).then(resolveQueue);
             }
+
+            return Promise.resolve();
         };
 
         resolveQueue().then(function () {
