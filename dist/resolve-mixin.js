@@ -19,7 +19,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  [
      {
          cursor: [required] cursor,
-         getPromise: [required] Function: which returns promise,
+         service: [required] Function: which returns promise,
          alwaysLoad: [optional] Boolean: always load data via promise call,
          transform: [optional] Function: transforms data, called only on load
      }
@@ -34,6 +34,9 @@ exports.default = {
     },
 
     componentWillMount: function componentWillMount() {
+        this.resolve();
+    },
+    resolve: function resolve() {
         var _this = this;
 
         // onResolve exists only on renderToString
@@ -58,7 +61,7 @@ exports.default = {
             }
 
             if (alwaysLoad || !isLoaded) {
-                var promise = item.getPromise().then(function (data) {
+                var promise = item.service().then(function (data) {
                     if (_lodash2.default.isFunction(item.transform)) {
                         data = item.transform(data);
                     }
