@@ -16,7 +16,7 @@ export default React.createClass({
         return [
             {
                 cursor: this.cursors.user,
-                getPromise: getUser,
+                service: getUser,
                 transform: this.transformUser,
             },
         ];

@@ -15,7 +15,7 @@ export default React.createClass({
         return [
             {
                 cursor: this.cursors.user,
-                getPromise: this.props.getPromise,
+                service: this.props.service,
                 alwaysLoad: this.props.alwaysLoad,
             },
         ];

@@ -5,7 +5,7 @@ import _ from 'lodash';
  [
      {
          cursor: [required] cursor,
-         getPromise: [required] Function: which returns promise,
+         service: [required] Function: which returns promise,
          alwaysLoad: [optional] Boolean: always load data via promise call,
          transform: [optional] Function: transforms data, called only on load
      }
@@ -20,6 +20,10 @@ export default {
     },
 
     componentWillMount() {
+        this.resolve();
+    },
+
+    resolve() {
         // onResolve exists only on renderToString
         const inRenderToString = _.isFunction(this.context.onResolve);
 
@@ -42,7 +46,7 @@ export default {
             }
 
             if (alwaysLoad || !isLoaded) {
-                const promise = item.getPromise()
+                const promise = item.service()
                     .then(data => {
                         if (_.isFunction(item.transform)) {
                             data = item.transform(data);

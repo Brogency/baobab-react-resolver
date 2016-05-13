@@ -20,7 +20,7 @@ const Profile = React.createClass({
         return [
             {
                 cursor: this.cursors.settings,
-                getPromise: () => getSettings(this.state.pk),
+                service: () => getSettings(this.state.pk),
             },
         ];
     },
@@ -48,7 +48,7 @@ const User = React.createClass({
         return [
             {
                 cursor: this.cursors.profile,
-                getPromise: () => getProfile(this.state.pk),
+                service: () => getProfile(this.state.pk),
             },
         ];
     },
@@ -77,7 +77,7 @@ export default React.createClass({
         return [
             {
                 cursor: this.cursors.user,
-                getPromise: getUser,
+                service: getUser,
             },
         ];
     },

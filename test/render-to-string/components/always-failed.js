@@ -15,7 +15,7 @@ export default React.createClass({
         return [
             {
                 cursor: this.cursors.user,
-                getPromise: () => new Promise((resolve, reject) => reject()),
+                service: () => new Promise((resolve, reject) => reject()),
             },
         ];
     },

@@ -15,7 +15,7 @@ function renderAlwaysLoad(alwaysLoad, initialTree) {
 
     const { tree } = render(
         <AlwaysLoad alwaysLoad={alwaysLoad}
-            getPromise={() => promise} />,
+            service={() => promise} />,
         container,
         null,
         { asynchronous: false }
