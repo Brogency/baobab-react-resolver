@@ -11,7 +11,7 @@ export default React.createClass({
         user: ['user'],
     },
 
-    getResolve() {
+    getResolverBindings() {
         return [
             {
                 cursor: this.cursors.user,

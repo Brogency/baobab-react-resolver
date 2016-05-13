@@ -23,14 +23,14 @@ export default {
         this.resolve();
     },
 
-    resolve() {
+    resolve(force = false) {
         // onResolve exists only on renderToString
         const inRenderToString = _.isFunction(this.context.onResolve);
 
         // renderToString is used only on server render side
         const renderSide = inRenderToString ? 'server' : 'client';
 
-        const toResolve = this.getResolve();
+        const toResolve = this.getResolverBindings();
 
         _.forEach(toResolve, item => {
             const cursor = item.cursor;
@@ -45,7 +45,7 @@ export default {
                 return true;
             }
 
-            if (alwaysLoad || !isLoaded) {
+            if (force || alwaysLoad || !isLoaded) {
                 const promise = item.service()
                     .then(data => {
                         if (_.isFunction(item.transform)) {
@@ -71,7 +71,7 @@ export default {
     },
 
     isFullyLoaded() {
-        const toResolve = this.getResolve();
+        const toResolve = this.getResolverBindings();
 
         return _.every(toResolve, item => item.cursor.get('isLoaded'));
     },

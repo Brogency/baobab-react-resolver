@@ -16,7 +16,7 @@ const Profile = React.createClass({
         },
     },
 
-    getResolve() {
+    getResolverBindings() {
         return [
             {
                 cursor: this.cursors.settings,
@@ -44,7 +44,7 @@ const User = React.createClass({
         },
     },
 
-    getResolve() {
+    getResolverBindings() {
         return [
             {
                 cursor: this.cursors.profile,
@@ -73,7 +73,7 @@ export default React.createClass({
         user: ['user'],
     },
 
-    getResolve() {
+    getResolverBindings() {
         return [
             {
                 cursor: this.cursors.user,
