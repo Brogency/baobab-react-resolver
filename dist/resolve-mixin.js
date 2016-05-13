@@ -39,13 +39,15 @@ exports.default = {
     resolve: function resolve() {
         var _this = this;
 
+        var force = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+
         // onResolve exists only on renderToString
         var inRenderToString = _lodash2.default.isFunction(this.context.onResolve);
 
         // renderToString is used only on server render side
         var renderSide = inRenderToString ? 'server' : 'client';
 
-        var toResolve = this.getResolve();
+        var toResolve = this.getResolverBindings();
 
         _lodash2.default.forEach(toResolve, function (item) {
             var cursor = item.cursor;
@@ -60,7 +62,7 @@ exports.default = {
                 return true;
             }
 
-            if (alwaysLoad || !isLoaded) {
+            if (force || alwaysLoad || !isLoaded) {
                 var promise = item.service().then(function (data) {
                     if (_lodash2.default.isFunction(item.transform)) {
                         data = item.transform(data);
@@ -84,7 +86,7 @@ exports.default = {
         });
     },
     isFullyLoaded: function isFullyLoaded() {
-        var toResolve = this.getResolve();
+        var toResolve = this.getResolverBindings();
 
         return _lodash2.default.every(toResolve, function (item) {
             return item.cursor.get('isLoaded');
