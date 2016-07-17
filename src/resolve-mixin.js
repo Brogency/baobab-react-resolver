@@ -35,10 +35,20 @@ export default {
         const toResolve = this.getResolverBindings();
 
         _.forEach(toResolve, (item) => {
-            const cursor = item.cursor;
+            const { cursor, service, merge } = item;
+
+            /* istanbul ignore next */
+            if (!cursor) {
+                throw Exception('baobab-react-resolver: cursor is not set');
+            }
+
+            /* istanbul ignore next */
+            if (!_.isFunction(service)) {
+                throw Exception('baobab-react-resolver: service is not function');
+            }
+
             const alwaysLoad = inRenderToString ? false : item.alwaysLoad;
             const initialData = item.initialData || null;
-            const merge = item.merge;
 
             const cursorValue = cursor.get();
             const isLoaded = _.get(cursorValue, 'isLoaded');
@@ -66,7 +76,7 @@ export default {
             if (force || alwaysLoad || !isLoaded) {
                 cursor.set('isLoading', true);
 
-                const promise = item.service()
+                const promise = service()
                     .then((data) => {
                         if (_.isFunction(item.transform)) {
                             data = item.transform(data);
