@@ -4,7 +4,7 @@ import { renderToString, render } from '../../src';
 import Transform from './components/transform';
 import AlwaysLoad from './components/always-load';
 
-function renderAlwaysLoad(alwaysLoad, initialTree) {
+function renderAlwaysLoad(alwaysLoad, initialTree, itemOptions = {}) {
     const promise = new Promise((resolve, reject) => resolve({
         pk: 1000,
     }));
@@ -15,7 +15,9 @@ function renderAlwaysLoad(alwaysLoad, initialTree) {
 
     const { tree } = render(
         <AlwaysLoad alwaysLoad={alwaysLoad}
-            service={() => promise} />,
+            service={() => promise}
+            {...itemOptions}
+        />,
         container,
         null,
         { asynchronous: false }
@@ -42,7 +44,98 @@ describe('ResolveMixin', () => {
         });
     });
 
-    it('should do not load data again if alwaysLoad is true and data loaded from server', (done) => {
+    it('should set data correctly for empty cursor', (done) => {
+        const initialTree = {
+            user: {},
+        };
+
+        const { promise, tree } = renderAlwaysLoad(true, initialTree);
+        promise.then(() => {
+            tree.get('user').should.be.deep.equal({
+                data: {
+                    pk: 1000,
+                },
+                isLoaded: true,
+                isLoading: false,
+                initiator: 'client',
+            });
+            done();
+        });
+    });
+
+    it('should set data correctly for not-object cursor', (done) => {
+        const initialTree = {
+            user: null,
+        };
+
+        const { promise, tree } = renderAlwaysLoad(true, initialTree);
+        promise.then(() => {
+            tree.get('user').should.be.deep.equal({
+                data: {
+                    pk: 1000,
+                },
+                isLoaded: true,
+                isLoading: false,
+                initiator: 'client',
+            });
+            done();
+        });
+    });
+
+    it('should merge data if merge is true', (done) => {
+        const initialTree = {
+            user: {
+                data: {
+                    pk: 999,
+                    existingInData: true,
+                },
+                existing: true,
+            },
+        };
+
+        const { promise, tree } = renderAlwaysLoad(true, initialTree, { merge: true });
+        promise.then(() => {
+            tree.get('user').should.be.deep.equal({
+                data: {
+                    pk: 1000,
+                    existingInData: true,
+                },
+                existing: true,
+                isLoaded: true,
+                isLoading: false,
+                initiator: 'client',
+            });
+            done();
+        });
+    });
+
+    it('should override data if merge is false', (done) => {
+        const initialTree = {
+            user: {
+                data: {
+                    pk: 999,
+                    existingInData: true,
+                },
+                existing: true,
+            },
+        };
+
+        const { promise, tree } = renderAlwaysLoad(true, initialTree, { merge: false });
+        promise.then(() => {
+            tree.get('user').should.be.deep.equal({
+                data: {
+                    pk: 1000,
+                },
+                existing: true,
+                isLoaded: true,
+                isLoading: false,
+                initiator: 'client',
+            });
+            done();
+        });
+    });
+
+    it('should not load data again if alwaysLoad is true and data loaded from server', (done) => {
         const initialTree = {
             user: {
                 data: {
@@ -51,7 +144,6 @@ describe('ResolveMixin', () => {
                 initiator: 'server',
                 isLoaded: true,
             },
-
         };
 
         const { promise, tree } = renderAlwaysLoad(true, initialTree);
@@ -70,7 +162,6 @@ describe('ResolveMixin', () => {
                 initiator: 'client',
                 isLoaded: true,
             },
-
         };
 
         const { promise, tree } = renderAlwaysLoad(true, initialTree);
@@ -80,7 +171,7 @@ describe('ResolveMixin', () => {
         });
     });
 
-    it('should do not load data again if alwaysLoad is false and data loaded from server', (done) => {
+    it('should not load data again if alwaysLoad is false and data loaded from server', (done) => {
         const initialTree = {
             user: {
                 data: {
@@ -99,7 +190,7 @@ describe('ResolveMixin', () => {
         });
     });
 
-    it('should do not load data again if alwaysLoad is false and data loaded from client', (done) => {
+    it('should not load data again if alwaysLoad is false and data loaded from client', (done) => {
         const initialTree = {
             user: {
                 data: {

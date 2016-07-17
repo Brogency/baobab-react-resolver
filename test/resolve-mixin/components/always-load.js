@@ -17,6 +17,7 @@ export default React.createClass({
                 cursor: this.cursors.user,
                 service: this.props.service,
                 alwaysLoad: this.props.alwaysLoad,
+                merge: this.props.merge,
             },
         ];
     },

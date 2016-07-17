@@ -46,15 +46,21 @@ export default {
 
             if (isLoaded && initiator != renderSide) {
                 cursor.set('initiator', renderSide);
+
                 return true;
             }
 
-            if (!cursor.exists('data')) {
-                cursor.merge({
-                    data: initialData,
+            if (!_.isObject(cursor.get())) {
+                // Set initial structure
+                cursor.set({
                     isLoaded: false,
                     isLoading: false,
                 });
+            }
+
+            if (!cursor.exists('data')) {
+                // Set initial data
+                cursor.set('data', initialData);
             }
 
             if (force || alwaysLoad || !isLoaded) {
@@ -72,7 +78,7 @@ export default {
                             initiator: renderSide,
                         });
 
-                        if (merge) {
+                        if (merge && _.isObject(cursor.get('data'))) {
                             cursor.merge('data', data);
                         } else {
                             cursor.set('data', data);
