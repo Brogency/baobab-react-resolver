@@ -6,8 +6,10 @@ import _ from 'lodash';
      {
          cursor: [required] cursor,
          service: [required] Function: which returns promise,
-         alwaysLoad: [optional] Boolean: always load data via promise call,
-         transform: [optional] Function: transforms data, called only on load
+         alwaysLoad: [optional, default=false] Boolean: always load data via promise call,
+         initialData: [optional, default=null] Any,
+         merge: [optional, default=false] Use merge instead of set for data,
+         transform: [optional, deprecated] Function: transforms data, called only on load,
      }
  ]
  */
@@ -32,9 +34,11 @@ export default {
 
         const toResolve = this.getResolverBindings();
 
-        _.forEach(toResolve, item => {
+        _.forEach(toResolve, (item) => {
             const cursor = item.cursor;
             const alwaysLoad = inRenderToString ? false : item.alwaysLoad;
+            const initialData = item.initialData || null;
+            const merge = item.merge;
 
             const cursorValue = cursor.get();
             const isLoaded = _.get(cursorValue, 'isLoaded');
@@ -45,18 +49,41 @@ export default {
                 return true;
             }
 
+            if (!cursor.exists('data')) {
+                cursor.merge({
+                    data: initialData,
+                    isLoaded: false,
+                    isLoading: false,
+                });
+            }
+
             if (force || alwaysLoad || !isLoaded) {
+                cursor.set('isLoading', true);
+
                 const promise = item.service()
-                    .then(data => {
+                    .then((data) => {
                         if (_.isFunction(item.transform)) {
                             data = item.transform(data);
                         }
 
-                        cursor.set({
+                        cursor.merge({
                             isLoaded: true,
+                            isLoading: false,
                             initiator: renderSide,
-                            data,
                         });
+
+                        if (merge) {
+                            cursor.merge('data', data);
+                        } else {
+                            cursor.set('data', data);
+                        }
+
+                        return Promise.resolve(data);
+                    })
+                    .catch((err) => {
+                        cursor.set('isLoading', false);
+
+                        return Promise.reject(err);
                     });
 
                 if (inRenderToString) {
@@ -74,5 +101,11 @@ export default {
         const toResolve = this.getResolverBindings();
 
         return _.every(toResolve, item => item.cursor.get('isLoaded'));
+    },
+
+    isLoading() {
+        const toResolve = this.getResolverBindings();
+
+        return _.some(toResolve, item => item.cursor.get('isLoading'));
     },
 };
