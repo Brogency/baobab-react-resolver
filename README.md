@@ -16,7 +16,7 @@ Based on [Baobab cursors](https://github.com/Yomguithereal/baobab).
 
 ## Example
 
-```
+```javascript
 import React from 'react';
 import { ResolveMixin } from 'baobab-react-resolver';
 import { SchemaBranchMixin } from 'baobab-react-mixins';
