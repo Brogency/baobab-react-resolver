@@ -39,12 +39,12 @@ export default {
 
             /* istanbul ignore next */
             if (!cursor) {
-                throw Exception('baobab-react-resolver: cursor is not set');
+                throw Error('baobab-react-resolver: cursor is not set');
             }
 
             /* istanbul ignore next */
             if (!_.isFunction(service)) {
-                throw Exception('baobab-react-resolver: service is not function');
+                throw Error('baobab-react-resolver: service is not function');
             }
 
             const alwaysLoad = inRenderToString ? false : item.alwaysLoad;
